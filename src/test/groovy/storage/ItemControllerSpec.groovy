@@ -11,8 +11,8 @@ class ItemControllerSpec extends Specification {
         assert params != null
 
         // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
-        assert false, "TODO: Provide a populateValidParams() implementation for this generated test suite"
+//        params["name"] = 'someValidName'
+//        assert false, "TODO: Provide a populateValidParams() implementation for this generated test suite"
     }
 
     void "Test the index action returns the correct model"() {
@@ -148,5 +148,20 @@ class ItemControllerSpec extends Specification {
             Item.count() == 0
             response.redirectedUrl == '/item/index'
             flash.message != null
+    }
+
+    void "Test that the lowStock action returns the correct model"() {
+
+        when:"lowStock action is called"
+        populateValidParams(params)
+        def regularStockItem = new Item(externalId: 55556, name: 'Homme', brand: new Brand(name: "Burberry"),
+                price: 25, quantity: 8, size: 30).save()
+        def lowStockItem = new Item(externalId: 88866, name: 'Brit', brand: new Brand(name: "Burberry"),
+                price: 28, quantity: 4, size: 50).save()
+        controller.lowStock(10)
+
+        then: "A model is populated containing low stock domain instance"
+        model.itemList.size() == 1
+        model.itemList.get(0) == lowStockItem
     }
 }

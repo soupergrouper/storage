@@ -1,5 +1,8 @@
 package storage
 
+import java.util.stream.Collector
+import java.util.stream.Collectors
+
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
@@ -11,6 +14,11 @@ class ItemController {
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         respond Item.list(params), model:[itemCount: Item.count()]
+    }
+
+    def lowStock(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        respond Item.list(params).findAll{it.quantity < 5}, model:[itemCount: Item.count()]
     }
 
     def show(Item item) {
