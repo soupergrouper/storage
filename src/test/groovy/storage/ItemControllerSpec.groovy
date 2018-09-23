@@ -4,26 +4,34 @@ import grails.test.mixin.*
 import spock.lang.*
 
 @TestFor(ItemController)
-@Mock(Item)
+@Mock([Item, Brand])
 class ItemControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
 
         // TODO: Populate valid properties like...
-//        params["name"] = 'someValidName'
-//        assert false, "TODO: Provide a populateValidParams() implementation for this generated test suite"
+//        params["query"] = 'kenzo'
     }
 
-    void "Test the index action returns the correct model"() {
+    void "Test the list action returns the correct model"() {
 
-        when:"The index action is executed"
-            controller.index()
+        given:
+        def kenzoHomme = new Item(externalId: 55556, name: 'Homme', brand: new Brand(name: "Kenzo"),
+                price: 25, quantity: 8, size: 30).save()
+        def burberryBrit = new Item(externalId: 88866, name: 'Brit', brand: new Brand(name: "Burberry"),
+                price: 28, quantity: 4, size: 50).save()
+
+        when:"The list action is executed"
+            controller.list(10)
 
         then:"The model is correct"
-            !model.itemList
-            model.itemCount == 0
+            model.itemList
+            model.itemCount == 2
+            model.itemList.contains(kenzoHomme)
+            model.itemList.contains(burberryBrit)
     }
+
 
     void "Test the create action returns the correct model"() {
         when:"The create action is executed"
@@ -98,7 +106,7 @@ class ItemControllerSpec extends Specification {
             controller.update(null)
 
         then:"A 404 error is returned"
-            response.redirectedUrl == '/item/index'
+            response.redirectedUrl == '/item/list'
             flash.message != null
 
         when:"An invalid domain instance is passed to the update action"
@@ -130,7 +138,7 @@ class ItemControllerSpec extends Specification {
             controller.delete(null)
 
         then:"A 404 is returned"
-            response.redirectedUrl == '/item/index'
+            response.redirectedUrl == '/item/list'
             flash.message != null
 
         when:"A domain instance is created"
@@ -146,22 +154,22 @@ class ItemControllerSpec extends Specification {
 
         then:"The instance is deleted"
             Item.count() == 0
-            response.redirectedUrl == '/item/index'
+            response.redirectedUrl == '/item/list'
             flash.message != null
     }
 
     void "Test that the lowStock action returns the correct model"() {
 
         when:"lowStock action is called"
-        populateValidParams(params)
-        def regularStockItem = new Item(externalId: 55556, name: 'Homme', brand: new Brand(name: "Burberry"),
-                price: 25, quantity: 8, size: 30).save()
-        def lowStockItem = new Item(externalId: 88866, name: 'Brit', brand: new Brand(name: "Burberry"),
-                price: 28, quantity: 4, size: 50).save()
-        controller.lowStock(10)
+            populateValidParams(params)
+            def regularStockItem = new Item(externalId: 55556, name: 'Homme', brand: new Brand(name: "Kenzo"),
+                    price: 25, quantity: 8, size: 30).save()
+            def lowStockItem = new Item(externalId: 88866, name: 'Brit', brand: new Brand(name: "Burberry"),
+                    price: 28, quantity: 4, size: 50).save()
+            controller.lowStock(10)
 
         then: "A model is populated containing low stock domain instance"
-        model.itemList.size() == 1
-        model.itemList.get(0) == lowStockItem
+            model.itemList.size() == 1
+            model.itemList.get(0) == lowStockItem
     }
 }

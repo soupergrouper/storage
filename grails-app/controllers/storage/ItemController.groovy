@@ -1,7 +1,5 @@
 package storage
 
-import java.util.stream.Collector
-import java.util.stream.Collectors
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
@@ -11,9 +9,25 @@ class ItemController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def index(Integer max) {
+    static defaultAction = "list"
+
+    def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond Item.list(params), model:[itemCount: Item.count()]
+        def itemList = Item.createCriteria().list(params) {
+            if (params.query) {
+                and {
+                    params.query.split(" ").each { word ->
+                        or {
+                            brand {
+                                ilike("name", "%${word}%")
+                            }
+                            ilike("name", "%${word}%")
+                        }
+                    }
+                }
+            }
+        }
+        respond itemList, model: [itemCount: itemList.totalCount]
     }
 
     def lowStock(Integer max) {
@@ -97,7 +111,7 @@ class ItemController {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'item.label', default: 'Item'), item.id])
-                redirect action:"index", method:"GET"
+                redirect action:"list", method:"GET"
             }
             '*'{ render status: NO_CONTENT }
         }
@@ -107,7 +121,7 @@ class ItemController {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'item.label', default: 'Item'), params.id])
-                redirect action: "index", method: "GET"
+                redirect action: "list", method: "GET"
             }
             '*'{ render status: NOT_FOUND }
         }

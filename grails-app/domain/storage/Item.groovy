@@ -1,5 +1,6 @@
 package storage
 
+
 class Item {
 
     Long externalId
@@ -17,4 +18,5 @@ class Item {
         size nullable: false, min: 1
         quantity nullable: false, min: 0
     }
+
 }

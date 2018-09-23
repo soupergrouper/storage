@@ -14,6 +14,16 @@
                 <li><g:link class="list" action="lowStock"><g:message code="button.label.lowStock" args="[entityName]" /></g:link></li>
             </ul>
         </div>
+        <div class="nav">
+            <fieldset class="form">
+                <g:form action="list" method="GET">
+                    <div class="fieldcontain">
+                        <label for="query">Search for items:</label>
+                        <g:textField name="query" value="${params.query}"/>
+                    </div>
+                </g:form>
+            </fieldset>
+        </div>
         <div id="list-item" class="content scaffold-list" role="main">
             <h1><g:message code="default.list.label" args="[entityName]" /></h1>
             <g:if test="${flash.message}">
