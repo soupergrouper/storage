@@ -15,10 +15,10 @@
                 <li><g:link class="list" action="lowStock"><g:message code="button.label.lowStock" args="[entityName]" /></g:link></li>
             </ul>
         </div>
-        <div class="nav">
+        <div>
             <fieldset class="form">
                 <g:form action="list" method="GET">
-                    <div class="fieldcontain">
+                    <div>
                         <label for="query">Search for items:</label>
                         <g:textField name="query" value="${params.query}"/>
                     </div>
@@ -36,6 +36,18 @@
                 <g:paginate total="${itemCount ?: 0}" />
             </div>
             <export:formats formats="['csv', 'excel']" action="export" />
+            <br/>
+            <g:message code="import.items.label"/>
+            <div>
+                <g:form action="upload" enctype="multipart/form-data" useToken="true">
+
+                    <span class="button">
+                        <input type="file" name="uploadedFile"/>
+                        <input type="submit" class="upload" value="upload"/>
+                    </span>
+
+                </g:form>
+            </div>
         </div>
     </body>
 </html>

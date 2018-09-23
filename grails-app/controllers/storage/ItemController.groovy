@@ -14,6 +14,8 @@ class ItemController {
 
     def exportService
 
+    def uploadService
+
     GrailsApplication grailsApplication
 
     String lastExecutedQuery
@@ -147,5 +149,24 @@ class ItemController {
 
             exportService.export(params.f, response.outputStream, itemList, fields, null, [:], [:])
         }
+    }
+
+    def upload() {
+        def file = request.getFile("uploadedFile")
+        if (!file) {
+            flash.message = "File is not selected"
+            redirect action:"list"
+        }
+
+        log.info "Trying to export data from file [{}]", file.filename
+        try {
+            uploadService.importItemsFromFile(file.inputStream, file.filename)
+            flash.message = "Items were imported successfully"
+        }
+        catch (Exception e) {
+            log.error(e.message)
+            flash.message = "Error occurred while importing items: " + e.message
+        }
+        redirect action: "list"
     }
 }
