@@ -1,5 +1,6 @@
 package storage
 
+import grails.core.GrailsApplication
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
@@ -11,9 +12,17 @@ class ItemController {
 
     static defaultAction = "list"
 
+    def exportService
+
+    GrailsApplication grailsApplication
+
+    String lastExecutedQuery
+
+    def itemList
+
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        def itemList = Item.createCriteria().list(params) {
+        itemList = Item.createCriteria().list(params) {
             if (params.query) {
                 and {
                     params.query.split(" ").each { word ->
@@ -27,6 +36,7 @@ class ItemController {
                 }
             }
         }
+
         respond itemList, model: [itemCount: itemList.totalCount]
     }
 
@@ -124,6 +134,18 @@ class ItemController {
                 redirect action: "list", method: "GET"
             }
             '*'{ render status: NOT_FOUND }
+        }
+    }
+
+    def export() {
+        if(params?.f && params.f != "html") {
+            List fields = ["externalId", "name", "brand", "size", "price", "quantity"]
+
+            response.contentType = grailsApplication.config.getProperty("grails.mime.types.${params.f}")
+            def extension = params.f == 'excel' ? 'xls' : params.f
+            response.setHeader("Content-disposition", "attachment; filename=items.${extension}")
+
+            exportService.export(params.f, response.outputStream, itemList, fields, null, [:], [:])
         }
     }
 }
