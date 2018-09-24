@@ -13,7 +13,7 @@ class ItemControllerSpec extends Specification {
         // TODO: Populate valid properties like...
         params["externalId"] = 555;
         params["name"] = "One"
-        params["brand"] = new Brand(name: "Dolce&Gabana")
+        params["brand"] = new Brand(name: "Dolce & Gabbana")
         params["price"] = 5
         params["size"] = 50
         params["quantity"] = 0

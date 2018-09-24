@@ -12,6 +12,10 @@ import java.nio.charset.StandardCharsets
 
 import static org.apache.poi.ss.usermodel.Cell.*
 
+/**
+ * Service to import items from XLS or CSV files
+ * Columns should be: externalId, name, quantity
+ */
 @Transactional
 class UploadService {
 

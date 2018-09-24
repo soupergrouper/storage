@@ -25,12 +25,20 @@ class BootStrap {
 
         def kenzo = new Brand(name: "Kenzo")
         kenzo.save()
+        def dg = new Brand(name: "Dolce & Gabbana")
+        dg.save()
+        def boss = new Brand(name: "Boss")
+        boss.save()
         def burberry = new Brand(name: "Burberry")
         burberry.save()
         new Item(externalId: 55556, name: 'Homme', brand: kenzo,
             price: 25, quantity: 8, size: 30).save()
         new Item(externalId: 88866, name: 'Brit', brand: burberry,
             price: 28, quantity: 4, size: 50).save()
+        new Item(externalId: 10292, name: 'The One', brand: dg,
+            price: 33, quantity: 10, size: 100).save()
+        new Item(externalId: 13021, name: 'Hugo Boss', brand: boss,
+                price: 20, quantity: 3, size: 50).save()
     }
     def destroy = {
     }
