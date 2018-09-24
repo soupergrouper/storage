@@ -1,11 +1,13 @@
 package storage
 
 import grails.core.GrailsApplication
+import grails.plugin.springsecurity.annotation.Secured
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
+@Secured(['ROLE_READ_ONLY', 'ROLE_ADMIN'])
 class ItemController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -51,11 +53,13 @@ class ItemController {
         respond item
     }
 
+    @Secured(['ROLE_ADMIN'])
     def create() {
         respond new Item(params)
     }
 
     @Transactional
+    @Secured(['ROLE_ADMIN'])
     def save(Item item) {
         if (item == null) {
             transactionStatus.setRollbackOnly()
@@ -80,11 +84,13 @@ class ItemController {
         }
     }
 
+    @Secured(['ROLE_ADMIN'])
     def edit(Item item) {
         respond item
     }
 
     @Transactional
+    @Secured(['ROLE_ADMIN'])
     def update(Item item) {
         if (item == null) {
             transactionStatus.setRollbackOnly()
@@ -110,6 +116,7 @@ class ItemController {
     }
 
     @Transactional
+    @Secured(['ROLE_ADMIN'])
     def delete(Item item) {
 
         if (item == null) {
@@ -151,6 +158,7 @@ class ItemController {
         }
     }
 
+    @Secured(['ROLE_ADMIN'])
     def upload() {
         def file = request.getFile("uploadedFile")
         if (!file) {

@@ -11,7 +11,12 @@ class ItemControllerSpec extends Specification {
         assert params != null
 
         // TODO: Populate valid properties like...
-//        params["query"] = 'kenzo'
+        params["externalId"] = 555;
+        params["name"] = "One"
+        params["brand"] = new Brand(name: "Dolce&Gabana")
+        params["price"] = 5
+        params["size"] = 50
+        params["quantity"] = 0
     }
 
     void "Test the list action returns the correct model"() {
@@ -59,6 +64,9 @@ class ItemControllerSpec extends Specification {
             populateValidParams(params)
             item = new Item(params)
 
+            controller.request.method = 'POST'
+            request.format = 'form'
+
             controller.save(item)
 
         then:"A redirect is issued to the show action"
@@ -103,6 +111,7 @@ class ItemControllerSpec extends Specification {
         when:"Update is called for a domain instance that doesn't exist"
             request.contentType = FORM_CONTENT_TYPE
             request.method = 'PUT'
+            request.format = 'form'
             controller.update(null)
 
         then:"A 404 error is returned"
@@ -135,6 +144,7 @@ class ItemControllerSpec extends Specification {
         when:"The delete action is called for a null instance"
             request.contentType = FORM_CONTENT_TYPE
             request.method = 'DELETE'
+            request.format = 'form'
             controller.delete(null)
 
         then:"A 404 is returned"

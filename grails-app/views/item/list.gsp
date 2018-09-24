@@ -7,11 +7,14 @@
         <export:resource />
     </head>
     <body>
+        <div align="right"><sec:username /> (<g:link controller="logout">logout</g:link>)</div>
         <a href="#list-item" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
         <div class="nav" role="navigation">
             <ul>
                 <li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-                <li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+                <sec:ifAllGranted roles="ROLE_ADMIN">
+                    <li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+                </sec:ifAllGranted>
                 <li><g:link class="list" action="lowStock"><g:message code="button.label.lowStock" args="[entityName]" /></g:link></li>
             </ul>
         </div>
@@ -37,17 +40,19 @@
             </div>
             <export:formats formats="['csv', 'excel']" action="export" />
             <br/>
-            <g:message code="import.items.label"/>
-            <div>
-                <g:form action="upload" enctype="multipart/form-data" useToken="true">
+            <sec:ifAllGranted roles="ROLE_ADMIN">
+                <g:message code="import.items.label"/>
+                <div>
+                    <g:form action="upload" enctype="multipart/form-data" useToken="true">
 
-                    <span class="button">
-                        <input type="file" name="uploadedFile"/>
-                        <input type="submit" class="upload" value="upload"/>
-                    </span>
+                        <span class="button">
+                            <input type="file" name="uploadedFile"/>
+                            <input type="submit" class="upload" value="upload"/>
+                        </span>
 
-                </g:form>
-            </div>
+                    </g:form>
+                </div>
+            </sec:ifAllGranted>
         </div>
     </body>
 </html>
